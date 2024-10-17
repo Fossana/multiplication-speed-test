@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiplication Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+        }
+        h1 {
+            margin-top: 20px;
+        }
+        .problem {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+        .answers {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin: 20px;
+        }
+        button {
+            padding: 15px;
+            font-size: 1.5em;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .score {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+        .timer {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Multiplication Game</h1>
+    <div class="timer">Time: <span id="time">60</span>s</div>
+    <div class="problem" id="problem">1 x 1</div>
+    <div class="answers" id="answers"></div>
+    <div class="score">Score: <span id="score">0</span></div>
+
+    <script>
+        const timeLimit = 60;
+        const multiplicationTable = Array.from({length: 12}, (_, i) => i + 1);
+        let score = 0;
+        let timeLeft = timeLimit;
+        let timer;
+
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function generateProblem() {
+            const num1 = getRandomInt(1, 12);
+            const num2 = getRandomInt(1, 12);
+            return {num1, num2, correctAnswer: num1 * num2};
+        }
+
+        function generateAnswers(correctAnswer) {
+            let answers = new Set();
+            answers.add(correctAnswer);
+
+            while (answers.size < 4) {
+                const num1 = getRandomInt(1, 12);
+                const num2 = getRandomInt(1, 12);
+                const wrongAnswer = num1 * num2;
+                // Only add wrong answer if it's not the correct answer and not already in the set
+                if (wrongAnswer !== correctAnswer) {
+                    answers.add(wrongAnswer);
+                }
+            }
+
+            return Array.from(answers).sort(() => Math.random() - 0.5); // Shuffle answers
+        }
+
+        function updateProblem() {
+            const {num1, num2, correctAnswer} = generateProblem();
+            document.getElementById('problem').innerText = `${num1} x ${num2}`;
+
+            const answers = generateAnswers(correctAnswer);
+            const answersContainer = document.getElementById('answers');
+            answersContainer.innerHTML = '';
+
+            answers.forEach(answer => {
+                const button = document.createElement('button');
+                button.innerText = answer;
+                button.onclick = () => checkAnswer(answer, correctAnswer);
+                answersContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedAnswer, correctAnswer) {
+            if (selectedAnswer === correctAnswer) {
+                score += 1;
+            } else {
+                score -= 1;
+            }
+            document.getElementById('score').innerText = score;
+            updateProblem();
+        }
+
+        function startTimer() {
+            timer = setInterval(() => {
+                timeLeft -= 1;
+                document.getElementById('time').innerText = timeLeft;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    endGame();
+                }
+            }, 1000);
+        }
+
+        function endGame() {
+            alert(`Time's up! Your score is ${score}.`);
+            resetGame();
+        }
+
+        function resetGame() {
+            score = 0;
+            timeLeft = timeLimit;
+            document.getElementById('score').innerText = score;
+            document.getElementById('time').innerText = timeLeft;
+            updateProblem();
+            startTimer();
+        }
+
+        // Initialize game
+        resetGame();
+    </script>
+</body>
+</html>
