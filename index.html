@@ -13,6 +13,9 @@
         h1 {
             margin-top: 20px;
         }
+        .problem, .answers, .score, .timer, .end-message {
+            display: none;
+        }
         .problem {
             font-size: 2em;
             margin: 20px 0;
@@ -43,14 +46,35 @@
             font-size: 1.5em;
             margin-bottom: 20px;
         }
+        .instructions {
+            font-size: 1.2em;
+            margin: 20px;
+            display: block;
+        }
+        .end-message {
+            font-size: 1.5em;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Multiplication Game</h1>
+    <div class="instructions" id="instructions">
+        <p>Answer as many multiplication problems as you can in 60 seconds!</p>
+        <p>Correct answers score +1, while wrong answers score -1.</p>
+    </div>
+    <button id="start-button">Start Game</button>
+
     <div class="timer">Time: <span id="time">60</span>s</div>
     <div class="problem" id="problem">1 x 1</div>
     <div class="answers" id="answers"></div>
     <div class="score">Score: <span id="score">0</span></div>
+
+    <!-- End game message with option to restart -->
+    <div class="end-message" id="end-message">
+        <p>Time's up! Your final score is: <span id="final-score"></span></p>
+        <button id="restart-button">Restart Game</button>
+    </div>
 
     <script>
         const timeLimit = 60;
@@ -58,6 +82,9 @@
         let score = 0;
         let timeLeft = timeLimit;
         let timer;
+
+        document.getElementById('start-button').addEventListener('click', startGame);
+        document.getElementById('restart-button').addEventListener('click', resetGame);
 
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -77,13 +104,12 @@
                 const num1 = getRandomInt(1, 12);
                 const num2 = getRandomInt(1, 12);
                 const wrongAnswer = num1 * num2;
-                // Only add wrong answer if it's not the correct answer and not already in the set
                 if (wrongAnswer !== correctAnswer) {
                     answers.add(wrongAnswer);
                 }
             }
 
-            return Array.from(answers).sort(() => Math.random() - 0.5); // Shuffle answers
+            return Array.from(answers).sort(() => Math.random() - 0.5);
         }
 
         function updateProblem() {
@@ -125,8 +151,16 @@
         }
 
         function endGame() {
-            alert(`Time's up! Your score is ${score}.`);
-            resetGame();
+            document.getElementById('final-score').innerText = score;
+
+            // Hide game elements
+            document.getElementById('problem').style.display = 'none';
+            document.getElementById('answers').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('score').style.display = 'none';
+
+            // Show end game message and final score
+            document.getElementById('end-message').style.display = 'block';
         }
 
         function resetGame() {
@@ -134,12 +168,35 @@
             timeLeft = timeLimit;
             document.getElementById('score').innerText = score;
             document.getElementById('time').innerText = timeLeft;
+
+            // Hide end game message
+            document.getElementById('end-message').style.display = 'none';
+
+            // Show game elements again
+            document.getElementById('problem').style.display = 'block';
+            document.getElementById('answers').style.display = 'grid';
+            document.getElementById('timer').style.display = 'block';
+            document.getElementById('score').style.display = 'block';
+
+            // Start game again
             updateProblem();
             startTimer();
         }
 
-        // Initialize game
-        resetGame();
+        function startGame() {
+            // Hide start button and instructions
+            document.getElementById('start-button').style.display = 'none';
+            document.getElementById('instructions').style.display = 'none';
+
+            // Show game elements
+            document.getElementById('problem').style.display = 'block';
+            document.getElementById('answers').style.display = 'grid';
+            document.getElementById('timer').style.display = 'block';
+            document.getElementById('score').style.display = 'block';
+
+            // Start game logic
+            resetGame();
+        }
     </script>
 </body>
 </html>
