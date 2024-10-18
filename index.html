@@ -13,7 +13,7 @@
         h1 {
             margin-top: 20px;
         }
-        .problem, .answers, .score, .timer, .end-message {
+        .problem, .answers, .score, .timer {
             display: none;
         }
         .problem {
@@ -51,10 +51,6 @@
             margin: 20px;
             display: block;
         }
-        .end-message {
-            font-size: 1.5em;
-            margin-top: 20px;
-        }
     </style>
 </head>
 <body>
@@ -70,12 +66,6 @@
     <div class="answers" id="answers"></div>
     <div class="score">Score: <span id="score">0</span></div>
 
-    <!-- End game message with option to restart -->
-    <div class="end-message" id="end-message">
-        <p>Time's up! Your final score is: <span id="final-score"></span></p>
-        <button id="restart-button">Restart Game</button>
-    </div>
-
     <script>
         const timeLimit = 60;
         const multiplicationTable = Array.from({length: 12}, (_, i) => i + 1);
@@ -84,7 +74,6 @@
         let timer;
 
         document.getElementById('start-button').addEventListener('click', startGame);
-        document.getElementById('restart-button').addEventListener('click', resetGame);
 
         function getRandomInt(min, max) {
             return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -151,16 +140,8 @@
         }
 
         function endGame() {
-            document.getElementById('final-score').innerText = score;
-
-            // Hide game elements
-            document.getElementById('problem').style.display = 'none';
-            document.getElementById('answers').style.display = 'none';
-            document.getElementById('timer').style.display = 'none';
-            document.getElementById('score').style.display = 'none';
-
-            // Show end game message and final score
-            document.getElementById('end-message').style.display = 'block';
+            alert(`Time's up! Your score is ${score}.`);
+            resetGame();
         }
 
         function resetGame() {
@@ -169,18 +150,13 @@
             document.getElementById('score').innerText = score;
             document.getElementById('time').innerText = timeLeft;
 
-            // Hide end game message
-            document.getElementById('end-message').style.display = 'none';
-
-            // Show game elements again
-            document.getElementById('problem').style.display = 'block';
-            document.getElementById('answers').style.display = 'grid';
-            document.getElementById('timer').style.display = 'block';
-            document.getElementById('score').style.display = 'block';
-
-            // Start game again
-            updateProblem();
-            startTimer();
+            // Hide game elements, show start button again
+            document.getElementById('problem').style.display = 'none';
+            document.getElementById('answers').style.display = 'none';
+            document.getElementById('timer').style.display = 'none';
+            document.getElementById('score').style.display = 'none';
+            document.getElementById('start-button').style.display = 'block';
+            document.getElementById('instructions').style.display = 'block';
         }
 
         function startGame() {
@@ -196,6 +172,8 @@
 
             // Start game logic
             resetGame();
+            updateProblem();
+            startTimer();
         }
     </script>
 </body>
