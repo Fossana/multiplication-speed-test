@@ -95,10 +95,24 @@
             return Math.floor(Math.random() * (max - min + 1)) + min;
         }
 
+        let lastOperands = {num1: 0, num2: 0}; // Store the last problem's operands
+
         function generateProblem() {
-            const num1 = getRandomInt(1, 12);
-            const num2 = getRandomInt(1, 12);
-            return {num1, num2, correctAnswer: num1 * num2};
+            let num1, num2;
+            
+            do {
+                num1 = getRandomInt(1, 12);
+                num2 = getRandomInt(1, 12);
+            } while (
+                (num1 === lastOperands.num1 && num2 === lastOperands.num2) || 
+                (num1 === lastOperands.num2 && num2 === lastOperands.num1)
+            );
+        
+            // Update the last problem's operands
+            lastOperands = { num1, num2 };
+        
+            let correctAnswer = num1 * num2;
+            return { num1, num2, correctAnswer };
         }
 
         function generateAnswers(correctAnswer) {
@@ -170,6 +184,7 @@
 
         function resetGame() {
             score = 0;
+            lastOperands = {num1: 0, num2: 0};
             timeLeft = timeLimit;
             document.getElementById('score').innerText = score;
             document.getElementById('time').innerText = timeLeft;
